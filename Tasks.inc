@@ -314,7 +314,7 @@ class StorageManager
 		return self::$storage;
 	}
 
-	public function setStorage(IStorage $storage)
+	public static function setStorage(IStorage $storage)
 	{
 		self::$storage = $storage;
 	}
