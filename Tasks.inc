@@ -96,6 +96,7 @@ class Storage_Memcache implements IStorage
 	public function get_next_task()
 	{
 		$keys = $this->get_tasks_list();
+		if (empty($keys)) return false;
 		sort($keys);
 		$key = (string)$keys[0];
 		$content = unserialize($this->mem->read($key));
@@ -200,6 +201,7 @@ class Storage_Files implements IStorage
 
 	public function semaphore_create()
 	{
+		if (file_exists($this->semaphore_file)) return false;
 		$fsem = fopen($this->semaphore_file, 'w');
 		if (!$fsem) return false;
 		fclose($fsem);
