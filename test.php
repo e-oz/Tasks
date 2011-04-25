@@ -249,8 +249,13 @@ class TestTask extends Task
 	}
 }
 
-class Testing
+class Tester
 {
+	/**
+	 * Print results of completed test (in plain text)
+	 * @param array $results
+	 * @param string $newline
+	 */
 	public static function PrintResults($results, $newline = PHP_EOL)
 	{
 		/** @var TestResult $result */
@@ -267,7 +272,7 @@ class Testing
 		}
 	}
 
-	public static function MakeTest(IStorage $storage)
+	public static function RunTest(IStorage $storage)
 	{
 		$start_time = microtime(true);
 		$test = new Test($storage);
