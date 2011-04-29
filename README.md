@@ -10,7 +10,7 @@ For example, it can be sending mail, or long database queries, or checking some 
 Task-handlers it's classes, which will store tasks (when called from script) and execute restored tasks (when called from cron-script).
 See example of task-handler in MailDelayed.inc
 
-To execute tasks, \Tasks\Executor should be called, it's usual work for cron - see [tasks_cron.php](./blob/master/tasks_cron.php) for example.
+To execute tasks, \Tasks\Executor should be called, it's usual work for cron - see [tasks_cron.php](/./blob/master/tasks_cron.php) for example.
 
 ##Examples
 See [demo.php](demo.php) (how to use in scripts) and [MailDelayed.inc](MailDelayed.inc) (how to create Task-handler)
