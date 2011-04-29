@@ -88,9 +88,10 @@ class Storage_Memcache implements IStorage
 	protected $content_field_handler = 'handler';
 	protected $content_field_data = 'data';
 
-	public function __construct()
+	public function __construct(\IMemoryStorage $storage = null)
 	{
-		$this->mem = new \MemcacheObject('Tasks');
+		if (!empty($storage)) $this->mem = $storage;
+		else $this->mem = new \MemcacheObject('Tasks');
 	}
 
 	public function get_next_task()
@@ -173,9 +174,10 @@ class Storage_Files implements IStorage
 	protected $content_field_handler = 'handler';
 	protected $content_field_data = 'data';
 
-	public function __construct()
+	public function __construct($tasks_dir = '')
 	{
-		$this->tasks_dir = TASKS_DIR;
+		if (!empty($tasks_dir)) $this->tasks_dir = realpath($tasks_dir);
+		else $this->tasks_dir = TASKS_DIR;
 		$this->semaphore_file = $this->tasks_dir.'/.semaphore';
 	}
 
@@ -327,6 +329,8 @@ interface ITask
 	public function execute();
 
 	public function restore($data);
+
+	public function setStorage(IStorage $storage);
 }
 
 abstract class Task implements ITask
