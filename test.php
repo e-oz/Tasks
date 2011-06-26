@@ -1,5 +1,5 @@
 <?php
-namespace Tasks;
+namespace Jamm\Tasks;
 
 class TestResult
 {
@@ -135,14 +135,14 @@ class Test
 		$result->Expected(true)->Result(is_a($storage, 'Tasks\IStorage'))->addDescription(gettype($storage));
 
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
-		StorageManager::setStorage(new Storage_Files());
+		StorageManager::setStorage(new StorageFiles());
 		$storage = StorageManager::GetStorage();
-		$result->Expected(true)->Result(is_a($storage, 'Tasks\Storage_Files'))->addDescription(gettype($storage));
+		$result->Expected(true)->Result(is_a($storage, 'Tasks\StorageFiles'))->addDescription(gettype($storage));
 
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
-		StorageManager::setStorage(new Storage_Memcache());
+		StorageManager::setStorage(new StorageMemcache());
 		$storage = StorageManager::GetStorage();
-		$result->Expected(true)->Result(is_a($storage, 'Tasks\Storage_Memcache'))->addDescription(gettype($storage));
+		$result->Expected(true)->Result(is_a($storage, 'Tasks\StorageMemcache'))->addDescription(gettype($storage));
 
 		StorageManager::setStorage($this->storage);
 	}
@@ -224,7 +224,7 @@ class Test
 
 }
 
-class TestTask extends Task
+class TestTask extends \Jamm\Tasks\Task
 {
 	protected $title;
 	protected $descr;

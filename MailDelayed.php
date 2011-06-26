@@ -1,5 +1,5 @@
 <?php
-namespace Tasks;
+namespace Jamm\Tasks;
 
 //example of simple Task-class
 class MailDelayed extends Task

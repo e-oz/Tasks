@@ -1,5 +1,5 @@
 <?php
-namespace Tasks;
+namespace Jamm\Tasks;
 
 class Executor
 {
@@ -81,17 +81,17 @@ interface IStorage
 	public function get_tasks_list();
 }
 
-class Storage_Memcache implements IStorage
+class StorageMemcache implements IStorage
 {
 	protected $mem;
 	protected $key_semaphore = 'semaphore';
 	protected $content_field_handler = 'handler';
 	protected $content_field_data = 'data';
 
-	public function __construct(\IMemoryStorage $storage = null)
+	public function __construct(\Jamm\Memory\IMemoryStorage $storage = null)
 	{
 		if (!empty($storage)) $this->mem = $storage;
-		else $this->mem = new \MemcacheObject('Tasks');
+		else $this->mem = new \Jamm\Memory\MemcacheObject('Tasks');
 	}
 
 	public function get_next_task()
@@ -167,7 +167,7 @@ class Storage_Memcache implements IStorage
 	}
 }
 
-class Storage_Files implements IStorage
+class StorageFiles implements IStorage
 {
 	protected $semaphore_file;
 	protected $tasks_dir;
@@ -312,8 +312,8 @@ class StorageManager
 	{
 		if (empty(self::$storage))
 		{
-			if (class_exists('Memcache')) self::$storage = new Storage_Memcache();
-			else self::$storage = new Storage_Files();
+			if (class_exists('Memcache')) self::$storage = new StorageMemcache();
+			else self::$storage = new StorageFiles();
 		}
 		return self::$storage;
 	}

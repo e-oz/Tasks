@@ -1,7 +1,7 @@
 <?php
-
+namespace Jamm\Tasks;
 //This 2 lines will be enough, all another - just examples
-$executor = new \Tasks\Executor();
+$executor = new Executor();
 $executor->Start(300);
 
 //300 seconds executor will be wait for new tasks in loop,
@@ -9,10 +9,10 @@ $executor->Start(300);
 //to create permanent execution of tasks.
 
 //Example, how can be choosed another storage in cron:
-$files_executor = new \Tasks\Executor(new \Tasks\Storage_Files());
+$files_executor = new Executor(new StorageFiles());
 $files_executor->Start(5);
 
 //or via StorageManager:
-\Tasks\StorageManager::setStorage(new \Tasks\Storage_Memcache());
-$executor = new \Tasks\Executor();
+StorageManager::setStorage(new StorageMemcache());
+$executor = new Executor();
 $executor->Start();
