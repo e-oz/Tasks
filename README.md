@@ -15,13 +15,13 @@ To execute tasks, \Tasks\Executor should be called, it's usual work for cron - s
 ##Examples
 See [demo.php](https://github.com/jamm/Tasks/blob/master/demo.php) (how to use in scripts) and [MailDelayed.php](https://github.com/jamm/Tasks/blob/master/MailDelayed.php) (how to create Task-handler)
 
-##Requrements
+##Requirements
 ###PHP version: 5.3+
 ###Memcache storage
 [MemcacheObject](https://github.com/jamm/memory/blob/master/memcache.php) being used as storage
 
 ###Files storage
-To use files storage for a tasks, define constant TASKS_DIR - path to the folder for task-files
+To use files for the tasks, define constant TASKS_DIR - path to the folder for task-files
 
 ###Default storage
 If Memcache class does exists, StorageMemcache will be used as default, else - StorageFiles
