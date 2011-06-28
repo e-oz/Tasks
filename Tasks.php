@@ -8,7 +8,7 @@ class Executor
 
 	public function __construct(IStorage $Tasks_Storage = null)
 	{
-		if (!empty($this->storage)) $this->storage = $Tasks_Storage;
+		if (!empty($Tasks_Storage)) $this->storage = $Tasks_Storage;
 		else $this->storage = StorageManager::GetStorage();
 	}
 
@@ -167,6 +167,15 @@ class StorageMemcache implements IStorage
 	}
 }
 
+class StorageRedis extends StorageMemcache
+{
+	public function __construct(\Jamm\Memory\IMemoryStorage $storage = null)
+	{
+		if (!empty($storage)) $this->mem = $storage;
+		else $this->mem = new \Jamm\Memory\RedisObject('Tasks');
+	}
+}
+
 class StorageFiles implements IStorage
 {
 	protected $semaphore_file;
@@ -312,7 +321,8 @@ class StorageManager
 	{
 		if (empty(self::$storage))
 		{
-			if (class_exists('Memcache')) self::$storage = new StorageMemcache();
+			if (class_exists('Jamm\\Memory\\RedisObject')) self::$storage = new StorageRedis();
+			elseif (class_exists('Memcache')) self::$storage = new StorageMemcache();
 			else self::$storage = new StorageFiles();
 		}
 		return self::$storage;
