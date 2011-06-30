@@ -18,13 +18,13 @@ See [demo.php](https://github.com/jamm/Tasks/blob/master/demo.php) (how to use i
 ##Requirements
 ###PHP version: 5.3+
 
+###For Redis storage
+[Redis](http://redis.io) server should be installed (in debian/ubuntu: "apt-get install redis-server").
+[RedisObject](https://github.com/jamm/memory/blob/master/RedisObject.php) is used as a storage.
+
 ###For Memcache storage
 [Memcache](http://pecl.php.net/package/memcache) or [Memcached](http://pecl.php.net/package/memcached) PHP extension should be installed.  
 [MemcacheObject](https://github.com/jamm/memory/blob/master/memcache.php) is used as a storage.
-
-###For Redis storage
-[Redis](http://redis.io) server should be installed (in debian/ubuntu: "apt-get install redis-server").  
-[RedisObject](https://github.com/jamm/memory/blob/master/RedisObject.php) is used as a storage.
 
 ###Files storage
 To use files for the tasks, define constant TASKS_DIR - path to the folder for task-files.
