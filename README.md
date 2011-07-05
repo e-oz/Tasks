@@ -34,3 +34,9 @@ First possible:
 1. Redis    
 2. Memcache    
 3. Files  
+
+TODO:
+=====
+* Track results of tasks execution
+* Auto-repeated tasks
+* Rewrite tests to phpunit

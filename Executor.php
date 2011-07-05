@@ -25,7 +25,9 @@ class Executor
 				//other process will be able to execute other tasks
 				if (!$this->storage->semaphore_delete()) return false;
 
-				$task->execute();
+				$result = $task->execute();
+				//TODO: track execution results
+				if ($result===false) trigger_error('Task execution result is false!', E_USER_NOTICE);
 
 				//if semaphore exists, it's mean that task's execution time was too long
 				//and other process already executes other tasks, so this process should exit
@@ -37,7 +39,7 @@ class Executor
 				//create semaphore, to prevent multiple processes going to loop
 				if (!$this->storage->semaphore_create()) return false;
 			}
-			sleep(5);
+			sleep(2);
 		}
 
 		$this->storage->semaphore_delete();

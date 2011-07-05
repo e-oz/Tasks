@@ -71,6 +71,7 @@ class TestResult
 	public function Fail()
 	{
 		$this->type = self::type_fail;
+		if (!empty($this->description)) throw new \Exception('test '.$this->name.' failed: '.$this->description);
 		return $this;
 	}
 
@@ -91,6 +92,7 @@ class TestResult
 		if (empty($description)) return false;
 		if (!empty($this->description)) $this->description .= PHP_EOL.$description;
 		else $this->description = $description;
+		if ($this->type==self::type_fail) throw new \Exception('test '.$this->name.' failed: '.$this->description);
 		return $this;
 	}
 
@@ -117,13 +119,20 @@ class Test
 	 */
 	public function RunTests()
 	{
-		$this->test_storage_manager();
-		$this->test_semaphore_create();
-		$this->test_semaphore_exists();
-		$this->test_semaphore_delete();
-		$this->test_get_tasks_list();
-		$this->test_get_next_task();
-		$this->test_executor();
+		try
+		{
+			$this->test_storage_manager();
+			$this->test_semaphore_create();
+			$this->test_semaphore_exists();
+			$this->test_semaphore_delete();
+			$this->test_get_tasks_list();
+			$this->test_get_next_task();
+			$this->test_executor();
+		}
+		catch (\Exception $e)
+		{
+			print "\n\ntests execution failed: ".$e->getMessage()."\n\n";
+		}
 
 		return $this->results;
 	}
@@ -132,17 +141,17 @@ class Test
 	{
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
 		$storage = StorageManager::GetStorage();
-		$result->Expected(true)->Result(is_a($storage, 'Tasks\IStorage'))->addDescription(gettype($storage));
+		$result->Expected(true)->Result(is_a($storage, 'Jamm\\Tasks\\IStorage'))->addDescription(gettype($storage));
 
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
 		StorageManager::setStorage(new StorageFiles());
 		$storage = StorageManager::GetStorage();
-		$result->Expected(true)->Result(is_a($storage, 'Tasks\StorageFiles'))->addDescription(gettype($storage));
+		$result->Expected(true)->Result(is_a($storage, 'Jamm\\Tasks\\StorageFiles'))->addDescription(gettype($storage));
 
-		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
-		StorageManager::setStorage(new StorageMemcache());
-		$storage = StorageManager::GetStorage();
-		$result->Expected(true)->Result(is_a($storage, 'Tasks\StorageMemcache'))->addDescription(gettype($storage));
+		//		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
+		//		StorageManager::setStorage(new StorageMemcache());
+		//		$storage = StorageManager::GetStorage();
+		//		$result->Expected(true)->Result(is_a($storage, 'Jamm\\Tasks\\StorageMemcache'))->addDescription(gettype($storage));
 
 		StorageManager::setStorage($this->storage);
 	}
@@ -180,6 +189,8 @@ class Test
 	{
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
 		$task = new TestTask();
+		$r = $this->storage->get_tasks_list();
+		if (!empty($r)) throw new \Exception('List is not empty');
 		$task->Add('zz', 'zzz', true, 5);
 		$task->Add('zz', 'zzz', false, 1);
 		$r = $this->storage->get_tasks_list();
@@ -190,11 +201,16 @@ class Test
 	{
 		$this->results[] = $result = new TestResult(__METHOD__.__LINE__);
 		$task = new TestTask();
-		$task->Add('zz', 'zzz', true, 5);
+		$store = $task->Add('zz', __METHOD__, true, 5);
+		if (!$store)
+		{
+			$result->addDescription('Not stored: '.$store)->Fail();
+		}
 		$before = count($this->storage->get_tasks_list());
 		$next_task = $this->storage->get_next_task();
 		$after = count($this->storage->get_tasks_list());
-		$result->Expected(array(true, 1))->Result(array(is_a($next_task, 'Tasks\TestTask'), ($before-$after)))->addDescription(print_r($next_task, true))->addDescription('count after: '.$after);
+		$result->addDescription(print_r($next_task, true))->addDescription('count before: '.$before)->addDescription('count after: '.$after);
+		$result->Expected(array(true, 1))->Result(array(is_a($next_task, 'Jamm\\Tasks\\TestTask'), ($before-$after)));
 	}
 
 	public function test_executor()
@@ -224,38 +240,8 @@ class Test
 
 }
 
-class TestTask extends \Jamm\Tasks\Task
+class Testing
 {
-	protected $title;
-	protected $descr;
-
-	public function Add($title, $descr = '', $uniq = false, $priority = 1)
-	{
-		if (!empty($descr)) $data = array($title, $descr);
-		else $data = $title;
-		$this->getStorage()->store(__CLASS__, $data, $uniq, $priority);
-	}
-
-	public function execute()
-	{
-		$GLOBALS[Test::execution_globals_key]['title'] = $this->title;
-		$GLOBALS[Test::execution_globals_key]['descr'] = $this->descr;
-	}
-
-	public function restore($data)
-	{
-		if (is_array($data)) list($this->title, $this->descr) = $data;
-		else $this->title = $data;
-	}
-}
-
-class Tester
-{
-	/**
-	 * Print results of completed test (in plain text)
-	 * @param array $results
-	 * @param string $newline
-	 */
 	public static function PrintResults($results, $newline = PHP_EOL)
 	{
 		/** @var TestResult $result */
@@ -272,7 +258,7 @@ class Tester
 		}
 	}
 
-	public static function RunTest(IStorage $storage)
+	public static function MakeTest(IStorage $storage)
 	{
 		$start_time = microtime(true);
 		$test = new Test($storage);

@@ -6,8 +6,6 @@ abstract class MemStorage implements IStorage
 	/** @var \Jamm\Memory\IMemoryStorage */
 	protected $mem;
 	protected $key_semaphore = 'semaphore';
-	protected $content_field_handler = 'handler';
-	protected $content_field_data = 'data';
 
 	public function __construct(\Jamm\Memory\IMemoryStorage $storage = null)
 	{
@@ -23,16 +21,21 @@ abstract class MemStorage implements IStorage
 		if (empty($keys)) return false;
 		sort($keys);
 		$key = (string)$keys[0];
-		$content = unserialize($this->mem->read($key));
+		$task = $this->read_task($key);
 		$del = $this->mem->del($key);
-		if (!$del) return false;
-		if (empty($content)) return false;
-		$task_class_name = '\\'.$content[$this->content_field_handler];
-		if (empty($task_class_name) || !class_exists($task_class_name)) return false;
-		/** @var ITask $task */
-		$task = new $task_class_name;
-		$task->restore($content[$this->content_field_data]);
+		if (!$del)
+		{
+			trigger_error('Can not delete task!', E_USER_WARNING);
+			return false;
+		}
 		return $task;
+	}
+
+	public function read_task($id)
+	{
+		$content = $this->mem->read($id);
+		if (empty($content)) return false;
+		return unserialize($content);
 	}
 
 	public function semaphore_create()
@@ -54,13 +57,11 @@ abstract class MemStorage implements IStorage
 		return true;
 	}
 
-	public function store($handler_class_name, $data, $uniq = false, $priority = 1)
+	public function store($task_object, $unique = false, $priority = 1)
 	{
-		$content = serialize(array(
-								  $this->content_field_handler => $handler_class_name,
-								  $this->content_field_data => $data));
+		$content = serialize($task_object);
 		$priority = '['.intval($priority).']';
-		if ($uniq)
+		if ($unique)
 		{
 			$hash = $priority.md5($content);
 			return $this->mem->add($hash, $content);
@@ -72,7 +73,11 @@ abstract class MemStorage implements IStorage
 			while ($this->mem->add($key, $content)===false)
 			{
 				$i++;
-				if ($i > 1000) return false;
+				if ($i > 1000)
+				{
+					trigger_error('Can not add key more than 1000 times', E_USER_NOTICE);
+					return false;
+				}
 				$key = $t.$i;
 			}
 			return true;

@@ -3,7 +3,7 @@ namespace Jamm\Tasks;
 
 abstract class Task implements ITask
 {
-	protected $storage;
+	private $_storage;
 
 	final public function __construct()
 	{ }
@@ -11,14 +11,34 @@ abstract class Task implements ITask
 	/**
 	 * @return IStorage
 	 */
-	public function getStorage()
+	final public function getStorage()
 	{
-		if (empty($this->storage)) $this->storage = StorageManager::GetStorage();
-		return $this->storage;
+		if (empty($this->_storage)) $this->_storage = StorageManager::GetStorage();
+		return $this->_storage;
 	}
 
-	public function setStorage(IStorage $storage)
+	final public function setStorage(IStorage $storage)
 	{
-		$this->storage = $storage;
+		$this->_storage = $storage;
+	}
+
+	final public function __sleep()
+	{
+		//to not save 'storage' object
+		$my = get_class_vars(__CLASS__);
+		$c = get_object_vars($this);
+		foreach ($my as $k => $v) unset($c[$k]);
+		return array_keys($c);
+	}
+
+	/**
+	 * Store this Task (all properties)
+	 * @param bool $unique
+	 * @param int $priority
+	 * @return bool
+	 */
+	final public function store($unique = false, $priority = 1)
+	{
+		return $this->getStorage()->store($this, $unique, $priority);
 	}
 }

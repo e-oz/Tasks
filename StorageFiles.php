@@ -5,13 +5,11 @@ class StorageFiles implements IStorage
 {
 	protected $semaphore_file;
 	protected $tasks_dir;
-	protected $content_field_handler = 'handler';
-	protected $content_field_data = 'data';
 
 	public function __construct($tasks_dir = '')
 	{
 		if (!empty($tasks_dir)) $this->tasks_dir = realpath($tasks_dir);
-		else $this->tasks_dir = FILES_DIR;
+		else $this->tasks_dir = TASKS_DIR;
 		$this->semaphore_file = $this->tasks_dir.'/.semaphore';
 	}
 
@@ -28,7 +26,14 @@ class StorageFiles implements IStorage
 			$task = $this->read_task($filepath);
 			if (is_object($task))
 			{
-				unlink($filepath);
+				if (!unlink($filepath))
+				{
+					if (file_exists($filepath))
+					{
+						trigger_error('Can not delete task!', E_USER_WARNING);
+						return false;
+					}
+				}
 				return $task;
 			}
 		}
@@ -38,10 +43,7 @@ class StorageFiles implements IStorage
 	public function semaphore_create()
 	{
 		if (file_exists($this->semaphore_file)) return false;
-		$fsem = fopen($this->semaphore_file, 'w');
-		if (!$fsem) return false;
-		fclose($fsem);
-		return true;
+		return file_put_contents($this->semaphore_file, 1, LOCK_EX);
 	}
 
 	public function semaphore_delete()
@@ -65,32 +67,21 @@ class StorageFiles implements IStorage
 	}
 
 	/**
-	 * @param string $filepath
+	 * @param string $id
 	 * @return bool|ITask
 	 */
-	private function read_task($filepath)
+	public function read_task($id)
 	{
-		$content = file_get_contents($filepath);
+		$content = file_get_contents($id);
 		if (empty($content)) return false;
-		$content = unserialize($content);
-		if (empty($content)) return false;
-		$task_class_name = '\\'.$content[$this->content_field_handler];
-		if (empty($task_class_name) || !class_exists($task_class_name)) return false;
-		/** @var ITask $task */
-		$task = new $task_class_name;
-		$data = unserialize(base64_decode($content[$this->content_field_data]));
-		$task->restore($data);
-		return $task;
+		return unserialize($content);
 	}
 
-	public function store($handler_class_name, $data, $uniq = false, $priority = 1)
+	public function store($task_object, $unique = false, $priority = 1)
 	{
-		$data = base64_encode(serialize($data));
-		$content = serialize(array(
-								  $this->content_field_handler => $handler_class_name,
-								  $this->content_field_data => $data));
+		$content = serialize($task_object);
 		$priority = '['.intval($priority).']';
-		if ($uniq)
+		if ($unique)
 		{
 			$filename = $priority.md5($content);
 			if (file_exists($filename)) return true;
@@ -100,16 +91,12 @@ class StorageFiles implements IStorage
 			$filename = $priority.$this->get_new_filename($this->tasks_dir.'/'.$priority);
 		}
 
-		$f = fopen($this->tasks_dir.'/'.$filename, 'w');
-		if (!$f) return false;
-		fwrite($f, $content);
-		fclose($f);
-		return true;
+		return file_put_contents($this->tasks_dir.'/'.$filename, $content, LOCK_EX);
 	}
 
 	private function get_new_filename($dir)
 	{
-		$name = $t = round(microtime(1)*100);
+		$name = $t = round(microtime(true)*100);
 		$i = 0;
 		while (file_exists($dir.$name.'.task'))
 		{

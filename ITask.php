@@ -5,7 +5,8 @@ interface ITask
 {
 	public function execute();
 
-	public function restore($data);
-
 	public function setStorage(IStorage $storage);
+
+	/** @return IStorage */
+	public function getStorage();
 }
