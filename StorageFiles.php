@@ -6,10 +6,12 @@ class StorageFiles implements IStorage
 	protected $semaphore_file;
 	protected $tasks_dir;
 
-	public function __construct($tasks_dir = '')
+	/**
+	 * @param string $tasks_dir - temporary directory, when files of tasks will be stored
+	 */
+	public function __construct($tasks_dir)
 	{
-		if (!empty($tasks_dir)) $this->tasks_dir = realpath($tasks_dir);
-		else $this->tasks_dir = TASKS_DIR;
+		$this->tasks_dir = realpath($tasks_dir);
 		$this->semaphore_file = $this->tasks_dir.'/.semaphore';
 	}
 
