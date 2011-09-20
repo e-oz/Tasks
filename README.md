@@ -27,7 +27,7 @@ See [demo.php](https://github.com/jamm/Tasks/blob/master/demo.php) (how to use i
 [MemcacheObject](https://github.com/jamm/memory/blob/master/memcache.php) is used as a storage.
 
 ###Files storage
-To use files for the tasks, define constant TASKS_DIR - path to the folder for task-files.
+Just use :) No any external classes are required.
 
 ###Default storage
 First possible:
