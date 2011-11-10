@@ -85,7 +85,7 @@ class StorageFiles implements IStorage
 		$priority = '['.intval($priority).']';
 		if ($unique)
 		{
-			$filename = $priority.md5($content);
+			$filename = '1'.md5($content);
 			if (file_exists($filename)) return true;
 		}
 		else

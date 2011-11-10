@@ -6,10 +6,9 @@ class Executor
 	/** @var IStorage */
 	private $storage;
 
-	public function __construct(IStorage $Tasks_Storage = null)
+	public function __construct(IStorage $Tasks_Storage)
 	{
-		if (!empty($Tasks_Storage)) $this->storage = $Tasks_Storage;
-		else $this->storage = StorageManager::GetStorage();
+		$this->storage = $Tasks_Storage;
 	}
 
 	public function Start($loop_time = 10800)
@@ -19,7 +18,7 @@ class Executor
 		$finish_time = time()+$loop_time;
 		while (time() < $finish_time)
 		{
-			while ($task = $this->storage->get_next_task())
+			while (($task = $this->storage->get_next_task()))
 			{
 				//Unlink semaphore before executing task - if this task will take too long time,
 				//other process will be able to execute other tasks

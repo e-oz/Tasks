@@ -1,19 +1,16 @@
 <?php
 namespace Jamm\Tasks;
 
-abstract class MemStorage implements IStorage
+class MemStorage implements IStorage
 {
 	/** @var \Jamm\Memory\IMemoryStorage */
 	protected $mem;
 	protected $key_semaphore = 'semaphore';
 
-	public function __construct(\Jamm\Memory\IMemoryStorage $storage = null)
+	public function __construct(\Jamm\Memory\IMemoryStorage $storage)
 	{
-		if (!empty($storage)) $this->mem = $storage;
-		else $this->mem = $this->getDefaultStorage();
+		$this->mem = $storage;
 	}
-
-	abstract protected function getDefaultStorage();
 
 	public function get_next_task()
 	{
@@ -63,7 +60,7 @@ abstract class MemStorage implements IStorage
 		$priority = '['.intval($priority).']';
 		if ($unique)
 		{
-			$hash = $priority.md5($content);
+			$hash = '1'.md5($content);
 			return $this->mem->add($hash, $content);
 		}
 		else

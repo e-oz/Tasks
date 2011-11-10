@@ -1,7 +1,7 @@
 <?php
-namespace Jamm\Tasks;
+namespace Jamm\Tasks\Tests;
 
-class TestTask extends Task
+class TestTask extends \Jamm\Tasks\Task
 {
 	protected $title;
 	protected $descr;
@@ -15,7 +15,6 @@ class TestTask extends Task
 
 	public function execute()
 	{
-		$GLOBALS[Test::execution_globals_key]['title'] = $this->title;
-		$GLOBALS[Test::execution_globals_key]['descr'] = $this->descr;
+		print $this->title.$this->descr;
 	}
 }

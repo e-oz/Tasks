@@ -25,6 +25,4 @@ class MailDelayed extends Task
 		//execute this simple task
 		mail($this->to, $this->subject, $this->message);
 	}
-
 }
-
