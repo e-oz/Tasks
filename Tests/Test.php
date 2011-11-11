@@ -26,7 +26,7 @@ class Test extends \Jamm\Tester\ClassTest
 	{
 		if (empty($this->task_mock_class)) return new TestTask($this->storage);
 		$mock_class_name = $this->task_mock_class;
-		return new $mock_class_name;
+		return new $mock_class_name($this->storage);
 	}
 
 	protected function getNewExecutorObject()
