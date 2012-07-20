@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\Tasks;
-
 abstract class Task implements ITask
 {
 	private $_storage;

@@ -1,17 +1,17 @@
 <?php
 namespace Jamm\Tasks;
-
 class StorageFiles implements IStorage
 {
-	protected $semaphore_file;
-	protected $tasks_dir;
+	private $semaphore_file;
+	private $tasks_dir;
+	private $semaphore_life_time = 180;
 
 	/**
 	 * @param string $tasks_dir - temporary directory, when files of tasks will be stored
 	 */
 	public function __construct($tasks_dir)
 	{
-		$this->tasks_dir = realpath($tasks_dir);
+		$this->tasks_dir      = realpath($tasks_dir);
 		$this->semaphore_file = $this->tasks_dir.'/.semaphore';
 	}
 
@@ -58,7 +58,7 @@ class StorageFiles implements IStorage
 	{
 		if (file_exists($this->semaphore_file))
 		{
-			if (filemtime($this->semaphore_file) < (time()-self::semaphore_life_time))
+			if (filemtime($this->semaphore_file) < (time()-$this->semaphore_life_time))
 			{
 				unlink($this->semaphore_file);
 				return false;
@@ -81,7 +81,7 @@ class StorageFiles implements IStorage
 
 	public function store($task_object, $unique = false, $priority = 1)
 	{
-		$content = serialize($task_object);
+		$content  = serialize($task_object);
 		$priority = '['.intval($priority).']';
 		if ($unique)
 		{
@@ -92,14 +92,13 @@ class StorageFiles implements IStorage
 		{
 			$filename = $priority.$this->get_new_filename($this->tasks_dir.'/'.$priority);
 		}
-
 		return file_put_contents($this->tasks_dir.'/'.$filename, $content, LOCK_EX);
 	}
 
 	private function get_new_filename($dir)
 	{
 		$name = $t = round(microtime(true)*100);
-		$i = 0;
+		$i    = 0;
 		while (file_exists($dir.$name.'.task'))
 		{
 			$i++;
@@ -120,5 +119,15 @@ class StorageFiles implements IStorage
 			if (is_file($filepath)) $tasks[] = $filepath;
 		}
 		return $tasks;
+	}
+
+	public function getSemaphoreLifeTime()
+	{
+		return $this->semaphore_life_time;
+	}
+
+	public function setSemaphoreLifeTime($semaphore_life_time)
+	{
+		$this->semaphore_life_time = $semaphore_life_time;
 	}
 }

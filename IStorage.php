@@ -1,10 +1,7 @@
 <?php
 namespace Jamm\Tasks;
-
 interface IStorage
 {
-	const semaphore_life_time = 180;
-
 	/**
 	 * Returns stored Task object, first form the tasks list.
 	 * The task is removed from the list.
@@ -48,4 +45,8 @@ interface IStorage
 	 * @return array|boolean
 	 */
 	public function get_tasks_list();
+
+	public function getSemaphoreLifeTime();
+
+	public function setSemaphoreLifeTime($semaphore_life_time);
 }

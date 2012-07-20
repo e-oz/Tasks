@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\Tasks\Tests;
-
 class Test extends \Jamm\Tester\ClassTest
 {
 	protected $storage;
@@ -60,7 +59,7 @@ class Test extends \Jamm\Tester\ClassTest
 	public function test_get_tasks_list()
 	{
 		$task = $this->getNewTaskMockObject();
-		$r = $this->storage->get_tasks_list();
+		$r    = $this->storage->get_tasks_list();
 		if (!empty($r)) throw new \Exception('List is not empty');
 		$task->Add('zz', 'zzz', true, 5);
 		$task->Add('zz', 'zzz', false, 1);
@@ -73,9 +72,9 @@ class Test extends \Jamm\Tester\ClassTest
 	{
 		$task = $this->getNewTaskMockObject();
 		$this->assertTrue($task->Add('zz', __METHOD__, true, 5))->addCommentary('Not stored');
-		$before = count($this->storage->get_tasks_list());
+		$before    = count($this->storage->get_tasks_list());
 		$next_task = $this->storage->get_next_task();
-		$after = count($this->storage->get_tasks_list());
+		$after     = count($this->storage->get_tasks_list());
 		$this->assertEquals(($before-$after), 1)->addCommentary('Count before: '.$before.', count after: '.$after);
 		$this->assertEquals(get_class($next_task), get_class($task));
 	}
@@ -94,7 +93,6 @@ class Test extends \Jamm\Tester\ClassTest
 		$result = ob_get_contents();
 		ob_end_clean();
 		$this->assertEquals($result, 'test_title');
-
 		$task = $this->getNewTaskMockObject();
 		$task->Add('test_title1', 'test_descr');
 		ob_start();
@@ -102,7 +100,6 @@ class Test extends \Jamm\Tester\ClassTest
 		$result = trim(ob_get_contents());
 		ob_end_clean();
 		$this->assertEquals($result, 'test_title1test_descr');
-
 		$task = $this->getNewTaskMockObject();
 		$task->Add('test_title2', 'test_descr2', true, 5);
 		$task->Add('test_title2', 'test_descr2', true, 1);
