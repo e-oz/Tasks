@@ -1,5 +1,5 @@
 #Tasks
-Simple way to manage delayed execution in PHP scripts
+Simple way to manage delayed execution in PHP scripts  
 [![Build Status](https://travis-ci.org/jamm/Tasks.png)](https://travis-ci.org/jamm/Tasks)    
 
 ##Where can it be used
