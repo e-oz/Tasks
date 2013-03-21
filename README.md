@@ -1,5 +1,6 @@
 #Tasks
 Simple way to manage delayed execution in PHP scripts
+[![Build Status](https://travis-ci.org/jamm/Tasks.png)](https://travis-ci.org/jamm/Tasks)    
 
 ##Where can it be used
 It can be used to execute delayed tasks - tasks, which takes long time to execute and result of their execution isn't necessary to generate output of requested script.  
