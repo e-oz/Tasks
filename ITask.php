@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 interface ITask
 {
 	public function execute();

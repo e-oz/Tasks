@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 //See code MailDelayed class in MailDelayed.php file
 $taskStorage = new MemStorage(new \Jamm\Memory\RedisObject('tasks'));
 //To use in site's scripts:

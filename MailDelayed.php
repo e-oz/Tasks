@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 /**
  * Example of a simple Task-class
  */

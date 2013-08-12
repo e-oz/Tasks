@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks\Tests;
+
 class Test extends \Jamm\Tester\ClassTest
 {
 	protected $storage;
@@ -8,7 +9,9 @@ class Test extends \Jamm\Tester\ClassTest
 	public function __construct(\Jamm\Tasks\IStorage $storage, \Jamm\Tasks\ITask $TaskMock = null)
 	{
 		$this->storage = $storage;
-		if (!empty($TaskMock)) $this->task_mock_class = get_class($TaskMock);
+		if (!empty($TaskMock)) {
+			$this->task_mock_class = get_class($TaskMock);
+		}
 	}
 
 	protected function setUp()
@@ -23,7 +26,9 @@ class Test extends \Jamm\Tester\ClassTest
 
 	protected function getNewTaskMockObject()
 	{
-		if (empty($this->task_mock_class)) return new TestTask($this->storage);
+		if (empty($this->task_mock_class)) {
+			return new TestTask($this->storage);
+		}
 		$mock_class_name = $this->task_mock_class;
 		return new $mock_class_name($this->storage);
 	}
@@ -60,7 +65,9 @@ class Test extends \Jamm\Tester\ClassTest
 	{
 		$task = $this->getNewTaskMockObject();
 		$r    = $this->storage->get_tasks_list();
-		if (!empty($r)) throw new \Exception('List is not empty');
+		if (!empty($r)) {
+			throw new \Exception('List is not empty');
+		}
 		$task->Add('zz', 'zzz', true, 5);
 		$task->Add('zz', 'zzz', false, 1);
 		$r = $this->storage->get_tasks_list();
@@ -75,15 +82,14 @@ class Test extends \Jamm\Tester\ClassTest
 		$before    = count($this->storage->get_tasks_list());
 		$next_task = $this->storage->get_next_task();
 		$after     = count($this->storage->get_tasks_list());
-		$this->assertEquals(($before-$after), 1)->addCommentary('Count before: '.$before.', count after: '.$after);
+		$this->assertEquals(($before - $after), 1)->addCommentary('Count before: '.$before.', count after: '.$after);
 		$this->assertEquals(get_class($next_task), get_class($task));
 	}
 
 	public function test_executor()
 	{
 		$executor = $this->getNewExecutorObject();
-		while (($old_tasks = $this->storage->get_next_task()))
-		{
+		while (($old_tasks = $this->storage->get_next_task())) {
 			$old_tasks->execute();
 		}
 		$task = $this->getNewTaskMockObject();

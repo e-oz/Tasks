@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 //This 2 lines will be enough, all another - just examples
 $executor = new Executor(new MemStorage(new \Jamm\Memory\RedisObject('tasks')));
 $executor->Start(300);

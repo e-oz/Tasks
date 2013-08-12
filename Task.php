@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 abstract class Task implements ITask
 {
 	private $_storage;
@@ -34,7 +35,7 @@ abstract class Task implements ITask
 	/**
 	 * Store this Task (all properties)
 	 * @param bool $unique
-	 * @param int $priority
+	 * @param int  $priority
 	 * @return bool
 	 */
 	public function store($unique = false, $priority = 1)

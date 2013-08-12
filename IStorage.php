@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks;
+
 interface IStorage
 {
 	/**
@@ -33,9 +34,9 @@ interface IStorage
 	public function read_task($id);
 
 	/**
-	 * @param $task_object
+	 * @param         $task_object
 	 * @param boolean $unique
-	 * @param int $priority
+	 * @param int     $priority
 	 * @return boolean
 	 */
 	public function store($task_object, $unique = false, $priority = 1);

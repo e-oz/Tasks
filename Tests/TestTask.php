@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\Tasks\Tests;
+
 class TestTask extends \Jamm\Tasks\Task
 {
 	protected $title;

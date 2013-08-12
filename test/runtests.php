@@ -16,10 +16,8 @@ $tests = $Test->getTests();
 $Printer->addTests($tests);
 $Printer->printResultsLine();
 
-foreach ($Test->getTests() as $test_result)
-{
-	if (!$test_result->isSuccessful())
-	{
+foreach ($Test->getTests() as $test_result) {
+	if (!$test_result->isSuccessful()) {
 		$Printer->printFailedTests();
 		exit(1);
 	}
